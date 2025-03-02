@@ -46,6 +46,18 @@ define_target("crtp")
 define_target("sharedlock")
 define_target("interview")
 define_target("map")
+define_target("threadlocal")
+define_target("mystring")
+define_target("deletedemo")
+define_target("quicksort")
+define_target("mergesort")
+define_target("threadpool")
+define_target("futurepromise")
+define_target("handout")
+
+
+
+
 
 
 define_cudatarget("cuda")
