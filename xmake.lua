@@ -22,11 +22,15 @@ function define_cudatarget(name)
         --add_rules("cuda")
         set_kind("binary")
         set_toolset("cuda", "nvcc")
-        add_cuflags("-arch=sm_89", {force = true})
+        -- 添加 CUDA 编译选项
+        add_cuflags("-rdc=true", {force = true})  -- 启用 Relocatable Device Code
+        add_cuflags("-arch=sm_89", {force = true})  -- 指定 CUDA 架构
+        --add_cuflags("-arch=sm_89", {force = true})
         add_files(name .. "/*.cu")  -- 添加源文件
         --add_cugencodes("native")
         --set_policy("check.auto_ignore_flags", false)
         --add_cugencodes("compute_86")
+        set_policy("check.auto_ignore_flags", false)
 end
 
 
@@ -54,10 +58,13 @@ define_target("mergesort")
 define_target("threadpool")
 define_target("futurepromise")
 define_target("handout")
+define_target("jicheng")
+define_target("printarray")
+define_target("vector")
+define_target("str")
+--define_target("meituan")
 
-
-
-
-
-
-define_cudatarget("cuda")
+define_cudatarget("cudagemm")
+define_cudatarget("cudasoftmax")
+define_cudatarget("cudatran")
+define_cudatarget("cudarecucesum")

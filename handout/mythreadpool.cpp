@@ -42,22 +42,20 @@ public:
     }
 
     void start() {
-        for(int i=0;i<thread_num_;++i){
-            pool_.emplace_back(
-                [this](){
-                    Task task;
-                    {
-                        std::unique_lock<std::mutex> lock(mtx_);
-                        cv_.wait(lock,[this]{return stop_.load()||!task_.empty();});
-                        if(task_.empty()){return ;}
-                        task=std::move(task_.front());
-                        task_.pop();
-                    }
-                    thread_num_--;
-                    task();
-                    thread_num_++;
+        for (int i = 0; i < thread_num_; ++i) {
+            pool_.emplace_back([this]() {
+                Task task;
+                {
+                    std::unique_lock<std::mutex> lock(mtx_);
+                    cv_.wait(lock, [this]() { return stop_.load() || !task_.empty(); });
+                    if (task_.empty()) { return; }
+                    task = std::move(task_.front());
+                    task_.pop();
                 }
-            );
+                thread_num_--;
+                task();
+                thread_num_++;
+            });
         }
     }
 
@@ -73,23 +71,20 @@ public:
         }
     }
 
-    template<class F,class ...Args>
-    auto commit(F&&  f,Args&& ...args)->std::future<decltype(std::forward<F>(f)(std::forward<Args>(args)...))>{
+    template<class F, class... Args>
+    auto commit(F &&f, Args &&...args) -> std::future<decltype(std::forward<F>(f)(std::forward<Args>(args)...))> {
         using RetType = decltype(std::forward<F>(f)(std::forward<Args>(args)...));
-
-        if(stop_.load()){ return std::future<RetType>(RetType{});}
-
-        auto task=std::make_shared<std::packaged_task<RetType>>(std::bind<RetType>(std::forward<F>(f), std::forward<Args>(args)...));
+        if (stop_) { return std::future<RetType>{}; }
+        auto task =
+            std::make_shared<std::packaged_task<RetType()>>(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
         auto ret = task->get_future();
         {
-            std::unique_lock<std::mutex> mtx_;
-            task_.emplace([task]{(*task)();});
+            std::unique_lock<std::mutex> lock(mtx_);
+            task_.emplace([task] { (*task)(); });
         }
         cv_.notify_one();
         return ret;
     }
 };
 
-int main(){
-    return 0;
-}
+int main() { return 0; }

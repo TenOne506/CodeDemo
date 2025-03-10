@@ -5,16 +5,14 @@
 
 int partrtion(std::vector<int> &nums, int left, int right) {
     int pivot = nums[right];
-    int n = nums.size();
-    int i = left - 1;
-    for (int j = left; j < n; j++) {
-        if (nums[j] < pivot) {
+    int i =left-1;
+    for(int j=left;j<right;++j){
+        if(nums[j] < pivot){
             i++;
-            std::swap(nums[j], nums[i]);
+            std::swap(nums[i],nums[j]);
         }
     }
-
-    std::swap(nums[right],nums[i+1]);
+    std::swap(nums[right], nums[i+1]);
     return i+1;
 }
 
@@ -25,7 +23,22 @@ void quicksort(std::vector<int> &nums, int left, int right) {
         quicksort(nums, pivot + 1, right);
     }
 }
+int quickfind(std::vector<int> &nums, int left, int right,int k){
+    if(left==right){
+        return nums[left];
+    }
+    if(left<right){
+        int pivotindex = partrtion(nums, left,right);
+        if(pivotindex==k){
+            return nums[k];
+        }else if(pivotindex >k){
+            return quickfind(nums, left, pivotindex, k);
+        }else{
+            return quickfind(nums, pivotindex, right, k);
+        }
+    }
 
+}
 // 辅助函数，用于打印数组
 void printVector(const std::vector<int> &nums) {
     for (int num: nums) { std::cout << num << " "; }
