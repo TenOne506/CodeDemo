@@ -14,7 +14,9 @@ set_toolset("cxx", "clang++")
 function define_target(name)
     target(name)
         set_kind("binary")
+        set_languages("c++20")  -- 设置 C++ 版本为 C++20
         add_files(name .. "/*.cpp")  -- 添加源文件
+
 end
 
 function define_cudatarget(name)
@@ -62,6 +64,8 @@ define_target("jicheng")
 define_target("printarray")
 define_target("vector")
 define_target("str")
+define_target("treeorder")
+define_target("nolockqueue")
 --define_target("meituan")
 
 define_cudatarget("cudagemm")
