@@ -16,7 +16,7 @@ public:
         //调用内部元素的析构函数
         while (_head != _tail) {
             //std::allocator<T>::destroy(_data + _head);
-            std::destroy_at(_data + _head);// 使用 std::destroy_at
+            std::__destroy_at(_data + _head);// 使用 std::destroy_at
             _head = (_head + 1) % _max_size;
         }
         //调用回收操作
@@ -32,7 +32,7 @@ public:
             return false;
         }
         //在尾部位置构造一个T类型的对象，构造参数为args...
-        std::construct_at(_data + _tail, std::forward<Args>(args)...);
+        std::__construct_at(_data + _tail, std::forward<Args>(args)...);
         //更新尾部元素位置
         _tail = (_tail + 1) % _max_size;
         return true;
@@ -112,7 +112,7 @@ public:
         } while (!_atomic_using.compare_exchange_strong(use_expected, use_desired));
         //调用内部元素的析构函数
         while (_head != _tail) {
-            std::destroy_at(_data + _head);
+            std::__destroy_at(_data + _head);
             _head = (_head + 1) % _max_size;
         }
         //调用回收操作
@@ -141,7 +141,7 @@ public:
             return false;
         }
         //在尾部位置构造一个T类型的对象，构造参数为args...
-        std::construct_at(_data + _tail, std::forward<Args>(args)...);
+        std::__construct_at(_data + _tail, std::forward<Args>(args)...);
         //更新尾部元素位置
         _tail = (_tail + 1) % _max_size;
         do {
