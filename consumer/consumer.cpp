@@ -13,8 +13,8 @@
 // // 生产者函数
 // void producer(int id) {
 //     for (int i = 0; i < 10; ++i) {
-//         std::this_thread::sleep_for(std::chrono::milliseconds(100)); // 模拟生产耗时
-//         std::unique_lock<std::mutex> lock(mtx);
+//         std::this_thread::sleep_for(std::chrono::milliseconds(100)); //
+//         模拟生产耗时 std::unique_lock<std::mutex> lock(mtx);
 
 //         // 如果缓冲区已满，等待消费者消费
 //         cv_producer.wait(lock, [] { return buffer.size() < BUFFER_SIZE; });
@@ -32,8 +32,8 @@
 // // 消费者函数
 // void consumer(int id) {
 //     for (int i = 0; i < 10; ++i) {
-//         std::this_thread::sleep_for(std::chrono::milliseconds(200)); // 模拟消费耗时
-//         std::unique_lock<std::mutex> lock(mtx);
+//         std::this_thread::sleep_for(std::chrono::milliseconds(200)); //
+//         模拟消费耗时 std::unique_lock<std::mutex> lock(mtx);
 
 //         // 如果缓冲区为空，等待生产者生产
 //         cv_consumer.wait(lock, [] { return !buffer.empty(); });

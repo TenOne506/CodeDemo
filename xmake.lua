@@ -5,14 +5,35 @@ set_toolset("cxx", "clang++")
 -- export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 add_ldflags("-L/opt/homebrew/opt/llvm/lib")
 add_cxxflags("-I/opt/homebrew/opt/llvm/include")
+-- function define_target(name)
+--     target(name)
+--         set_kind("binary")
+--         set_languages("c++20")  -- 设置 C++ 版本为 C++20
+--         add_files(name .. "/*.cpp")  -- 添加源文件
+
+-- end
 function define_target(name)
     target(name)
         set_kind("binary")
         set_languages("c++20")  -- 设置 C++ 版本为 C++20
         add_files(name .. "/*.cpp")  -- 添加源文件
-
+        
+        -- 添加 clang-format 检查
+        on_load(function (target)
+            -- 检查 clang-format 是否可用
+            if os.isfile("/opt/homebrew/opt/llvm/bin/clang-format") or os.isfile("/usr/local/bin/clang-format") then
+                -- 获取所有源文件
+                local sourcefiles = target:sourcefiles()
+                
+                -- 对每个源文件运行 clang-format 检查
+                for _, file in ipairs(sourcefiles) do
+                    os.exec("clang-format --dry-run  %s", file)
+                end
+            else
+                print("warning: clang-format not found, skipping format check")
+            end
+        end)
 end
-
 -- function define_cudatarget(name)
 --     target(name)
 --         --add_rules("cuda")
