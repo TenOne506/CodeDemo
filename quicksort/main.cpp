@@ -3,21 +3,22 @@
 #include <vector>
 
 int partrtion(std::vector<int> &nums, int left, int right) {
-  int pivot = nums[right];
   int i = left - 1;
-  for (int j = left; j < right; ++j) {
+  int pivot = nums[right];
+  int j = left;
+  while (j < right) {
     if (nums[j] < pivot) {
-      i++;
+      ++i;
       std::swap(nums[i], nums[j]);
     }
+    ++j;
   }
-  std::swap(nums[right], nums[i + 1]);
-  return i + 1;
+  std::swap(nums[i + 1], nums[j]);
+  return 1 + i;
 }
-
 void quicksort(std::vector<int> &nums, int left, int right) {
   if (left < right) {
-    int pivot = partrtion(nums, 0, right);
+    int pivot = partrtion(nums, left, right);
     quicksort(nums, left, pivot - 1);
     quicksort(nums, pivot + 1, right);
   }

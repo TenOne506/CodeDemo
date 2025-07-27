@@ -17,7 +17,7 @@ function define_target(name)
         set_kind("binary")
         set_languages("c++20")  -- 设置 C++ 版本为 C++20
         add_files(name .. "/*.cpp")  -- 添加源文件
-        
+        add_files(name .. "/*.cc")  -- 添加源文件
         -- 添加 clang-format 检查
         on_load(function (target)
             -- 检查 clang-format 是否可用
@@ -50,8 +50,8 @@ end
 --         set_policy("check.auto_ignore_flags", false)
 -- end
 
-
-
+define_target("rotatemin")
+define_target("aho-corasick")
 define_target("printorder")
 define_target("uniquelock")
 define_target("classexample")

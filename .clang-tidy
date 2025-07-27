@@ -3,7 +3,7 @@
 # HeaderFilterRegex: '^src/*.cpp$'
 # 只分析项目代码（假设项目代码在 src/ 和 include/ 目录下）
 #  HeaderFilterRegex: '^(?!(.*/third_party/|.*/system/)).*(/src/|/include/)'
-#  SystemHeaders: false
+#  SystemHeaders: false readability-*,
 #  ExcludeHeaderFilterRegex: '(/usr/include/|/third_party/)'
 Checks: '-*,
 cppcoreguidelines-interfaces-global-init,
@@ -44,5 +44,4 @@ portability-simd-intrinsics,
 bugprone-*,
 clang-analyzer-*,
 modernize-*,
-readability-*,
 -modernize-use-trailing-return-type'
