@@ -50,6 +50,7 @@ end
 --         set_policy("check.auto_ignore_flags", false)
 -- end
 
+define_target("swap")
 define_target("readwritelock")
 define_target("rotatemin")
 define_target("aho-corasick")
