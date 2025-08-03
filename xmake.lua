@@ -1,3 +1,4 @@
+add_rules("mode.debug", "mode.release")
 set_toolchains("clang")
 set_toolset("cc", "clang")
 set_toolset("cxx", "clang++")
@@ -17,7 +18,14 @@ function define_target(name)
         set_kind("binary")
         set_languages("c++20")  -- 设置 C++ 版本为 C++20
         add_files(name .. "/*.cpp")  -- 添加源文件
-        add_files(name .. "/*.cc")  -- 添加源文件
+        if is_mode("debug") then
+            -- 启用调试信息并禁用优化
+            set_symbols("debug")
+            set_optimize("none")
+        elseif is_mode("release") then
+            -- 对于发布版本可以设置不同的优化选项
+            set_optimize("fastest")
+        end
         -- 添加 clang-format 检查
         on_load(function (target)
             -- 检查 clang-format 是否可用

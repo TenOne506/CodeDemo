@@ -5,7 +5,7 @@
 volatile int memory_location = 0;
 
 // 修改 compare_and_swap 函数，使其第一个参数接受 volatile int* 类型
-bool compare_and_swap(volatile int* ptr, int expected, int new_value) {
+__attribute__((noinline)) bool compare_and_swap(volatile int* ptr, int expected, int new_value) {
     // 模拟原子操作
     if (*ptr == expected) {
         *ptr = new_value;
