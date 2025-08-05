@@ -19,7 +19,6 @@ function define_target(name)
         set_languages("c++20")  -- 设置 C++ 版本为 C++20
         add_files(name .. "/*.cpp")  -- 添加源文件
         if is_mode("debug") then
-            -- 启用调试信息并禁用优化
             set_symbols("debug")
             set_optimize("none")
         elseif is_mode("release") then
@@ -58,6 +57,8 @@ end
 --         set_policy("check.auto_ignore_flags", false)
 -- end
 
+
+define_target("segtree")
 define_target("swap")
 define_target("readwritelock")
 define_target("rotatemin")
