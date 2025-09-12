@@ -1,68 +1,60 @@
-// #include <iostream>
-// #include <thread>
-// #include <queue>
-// #include <mutex>
-// #include <condition_variable>
-// #include <chrono>
+#include <condition_variable>
+#include <iostream>
+#include <mutex>
+#include <queue>
+#include <thread>
 
-// const int BUFFER_SIZE = 5; // 缓冲区大小
-// std::queue<int> buffer;    // 缓冲区
-// std::mutex mtx;            // 互斥锁
-// std::condition_variable cv_producer, cv_consumer; // 条件变量
+const int BUFFER_SIZE = 5;   // 缓冲区大小
+std::queue<int> buffer;      // 缓冲区
+std::mutex mtx;              // 互斥锁
+std::condition_variable cv;  // 单个条件变量 (更常见)
 
-// // 生产者函数
-// void producer(int id) {
-//     for (int i = 0; i < 10; ++i) {
-//         std::this_thread::sleep_for(std::chrono::milliseconds(100)); //
-//         模拟生产耗时 std::unique_lock<std::mutex> lock(mtx);
+void producer(int id) {
+    for (int i = 0; i < 5; ++i) {
+        std::unique_lock<std::mutex> lock(mtx);
+        // 等待缓冲区未满
+        cv.wait(lock, []() { return buffer.size() < BUFFER_SIZE; });
 
-// // 如果缓冲区已满，等待消费者消费
-// cv_producer.wait(lock, [] { return buffer.size() < BUFFER_SIZE; });
+        auto data = id * 100 + i;
+        buffer.emplace(data);
 
-// // 生产数据并放入缓冲区
-// int data = id * 100 + i;
-// buffer.push(data);
-// std::cout << "Producer " << id << " produced: " << data << std::endl;
+        // ✅ 在锁的保护下进行输出，避免交错
+        std::cout << "Producer: " << id << " produces data: " << data << std::endl;
 
-// lock.unlock();
-// cv_consumer.notify_all(); // 通知消费者
-// }
-// }
+        // 解锁前通知（或解锁后通知都可以）
+        lock.unlock();
+        cv.notify_one();  // 通知一个等待的消费者
+    }
+}
 
-// // 消费者函数
-// void consumer(int id) {
-//     for (int i = 0; i < 10; ++i) {
-//         std::this_thread::sleep_for(std::chrono::milliseconds(200)); //
-//         模拟消费耗时 std::unique_lock<std::mutex> lock(mtx);
+void consumer(int id) {
+    for (int i = 0; i < 5; ++i) {
+        std::unique_lock<std::mutex> lock(mtx);
+        // 等待缓冲区非空
+        cv.wait(lock, []() { return !buffer.empty(); });
 
-// // 如果缓冲区为空，等待生产者生产
-// cv_consumer.wait(lock, [] { return !buffer.empty(); });
+        auto data = buffer.front();
+        buffer.pop();
 
-// // 从缓冲区取出数据并消费
-// int data = buffer.front();
-// buffer.pop();
-// std::cout << "Consumer " << id << " consumed: " << data << std::endl;
+        // ✅ 在锁的保护下进行输出
+        std::cout << "Consumer: " << id << " consumes data: " << data << std::endl;
 
-// lock.unlock();
-// cv_producer.notify_all(); // 通知生产者
-// }
-// }
+        lock.unlock();
+        cv.notify_one();  // 通知一个等待的生产者
+    }
+}
 
-// int main() {
-//     // 创建生产者和消费者线程
-//     std::thread producers[2];
-//     std::thread consumers[2];
+// ------------------------ 使用示例 ------------------------
+int main() {
+    std::thread p1(producer, 1);
+    std::thread p2(producer, 2);
+    std::thread c1(consumer, 1);
+    std::thread c2(consumer, 2);
 
-// for (int i = 0; i < 2; ++i) {
-//     producers[i] = std::thread(producer, i + 1);
-//     consumers[i] = std::thread(consumer, i + 1);
-// }
+    p1.join();
+    p2.join();
+    c1.join();
+    c2.join();
 
-// // 等待所有线程完成
-// for (int i = 0; i < 2; ++i) {
-//     producers[i].join();
-//     consumers[i].join();
-// }
-
-// return 0;
-// }
+    return 0;
+}

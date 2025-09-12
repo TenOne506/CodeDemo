@@ -57,7 +57,7 @@ end
 --         set_policy("check.auto_ignore_flags", false)
 -- end
 
-
+define_target("size")
 define_target("segtree")
 define_target("swap")
 define_target("readwritelock")

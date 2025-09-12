@@ -4,7 +4,7 @@
 #include <thread>
 
 // 定义一个异步任务
-std::string fetchDataFromDB(std::string query) {
+std::string fetchDataFromDB(const std::string& query) {
     // 模拟一个异步任务，比如从数据库中获取数据
     std::this_thread::sleep_for(std::chrono::seconds(2));
     return "Data: " + query;
@@ -40,7 +40,7 @@ void myFunction(std::promise<int>&& promise) {
     promise.set_value(42);  // 设置 promise 的值
 }
 
-void threadFunction(std::shared_future<int> future) {
+void threadFunction(const std::shared_future<int>& future) {
     try {
         int result = future.get();
         std::cout << "Result: " << result << std::endl;
@@ -62,15 +62,14 @@ void use_shared_future() {
 
 int main() {
     // 使用 std::async 异步调用 fetchDataFromDB
-    // std::future<std::string> resultFromDB = std::async(std::launch::async,
-    // fetchDataFromDB, "Data");
-    // // 在主线程中做其他事情
-    // std::cout << "Doing something else..." << std::endl;
-    // // 从 future 对象中获取数据
-    // std::string dbData = resultFromDB.get();
-    // std::cout << dbData << std::endl;
+    std::future<std::string> resultFromDB = std::async(std::launch::async, fetchDataFromDB, "Data");
+    // 在主线程中做其他事情
+    std::cout << "Doing something else..." << std::endl;
+    // 从 future 对象中获取数据
+    std::string dbData = resultFromDB.get();
+    std::cout << dbData << std::endl;
 
-    // use_package();
+    use_package();
 
     // 创建一个 promise 对象
     std::promise<int> prom;
