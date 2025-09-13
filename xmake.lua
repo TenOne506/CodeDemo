@@ -34,7 +34,7 @@ function define_cudatarget(name)
 end
 
 
-
+define_target("funcstack")
 define_target("printorder")
 define_target("uniquelock")
 define_target("classexample")
